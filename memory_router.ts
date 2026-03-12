@@ -179,6 +179,24 @@ export class MemoryRouter {
   }
 
   /**
+   * Get latest breath hash for user (for parent_hash tracking)
+   */
+  get_latest_breath_hash(user_address: string): string | undefined {
+    const chain = this.lineage_chains.get(user_address);
+    if (!chain || chain.length === 0) {
+      return undefined;
+    }
+    return chain[chain.length - 1].hash;
+  }
+
+  /**
+   * Get DAG size (number of stored breaths)
+   */
+  get_dag_size(): number {
+    return this.breath_dag.size;
+  }
+
+  /**
    * Walk backward from breath_hash to genesis (following parent_hash chain)
    */
   walk_lineage(breath_hash: string): BreathBlob[] {

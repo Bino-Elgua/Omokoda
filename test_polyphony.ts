@@ -2,7 +2,8 @@
 // Verify the Twelve Lobes Polyphony works correctly
 
 import { MemoryRouter, BreathBlob, build_lobe_context } from "./memory_router.ts";
-import { OutputDistiller, LobeResponse, format_distilled_output } from "./output_distiller.ts";
+import { OutputDistiller, format_distilled_output } from "./output_distiller.ts";
+import type { LobeResponse } from "./output_distiller.ts";
 
 // Mock oracle responses for testing
 function mock_lobe_responses(): LobeResponse[] {
