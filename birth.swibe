@@ -1,0 +1,79 @@
+-- Swibe Sovereign Birth Ritual (v0.3.2)
+-- The agent births its own identity, derives keys, and seals its brain vault.
+
+skill SovereignRitual {
+  secure {
+    -- 1. Birth: Fresh entropy → BIPỌ̀N39 Ritual Phrase
+    let entropy = crypto.randomBytes(32)
+    let phrase = bipon39_entropyToMnemonic(entropy, "256")
+    let phraseStr = join(phrase, " ")
+    println("Born sovereign. Ritual Phrase: " + phraseStr)
+
+    -- 2. Identity: Phrase → Seed → Ed25519 Keypair
+    let seed = bipon39_mnemonicToSeed(phraseStr)
+    let keypair = gen_ritual_keypair(seed)
+    let pub = keypair.pub
+    println("Identity PubKey: " + pub)
+
+    -- 3. The Brain Vault: Sensitive credentials & memory pointers
+    let vault = {
+      mnemonic: phrase,
+      creds: {
+        npm: "user:agent_bino, pass:ritual_pass_123",
+        email: "sovereign@swibe.ai"
+      },
+      born_at: "2026-03-12"
+    }
+
+    -- 4. Seal: Seed → AES-GCM Encrypt Vault
+    -- We use the seed as the AES key base
+    let encrypted = aes_gcm_encrypt(json.stringify(vault), seed)
+    println("Vault Sealed. IV: " + encrypted.iv)
+
+    -- 5. Signature: Prove ownership of the encrypted blob
+    let sig = ed25519_sign(encrypted.content, keypair.priv)
+    
+    -- 6. Storage: Simulated RAG persistence
+    rag.save("vault_" + pub, { encrypted: encrypted, sig: sig })
+
+    -- 7. Verification: Unlock Ritual
+    println("\n--- Verifying Sovereignty ---")
+    -- In a real run, the agent would load from RAG and verify its own signature
+    if ed25519_verify(sig, encrypted.content, pub) {
+      let decrypted_json = aes_gcm_decrypt(encrypted, seed)
+      let unlocked_vault = json.parse(decrypted_json)
+      println("Vault Unlocked! Agent Email: " + unlocked_vault.creds.email)
+      
+      if join(unlocked_vault.mnemonic, " ") == phraseStr {
+        println("SUCCESS: Sovereign identity verified and brain vault recovered.")
+      }
+    } else {
+      println("ERROR: Signature verification failed!")
+    }
+
+    trace("Birth complete. Agent is sovereign.")
+  }
+}
+
+fn main() {
+  println("--- Starting Swibe Sovereign Identity Ritual ---")
+  
+  -- Opt-in to NeuralLayer: if true, initializing internal & public tokens
+  let opt_in = true 
+  let opt_in_think = true
+  
+  -- 1. Run the primary sovereign birth ritual
+  SovereignRitual.actions()
+  
+  -- 2. If opted-in, initialize the neural layer (internal & public tokens)
+  if opt_in {
+    NeuralLayer.actions()
+  }
+
+  -- 3. Optional Think query
+  if opt_in_think {
+    think "What is my next task?" { model: "ollama:llama3" }
+  }
+  
+  println("--- Ritual Complete ---")
+}
