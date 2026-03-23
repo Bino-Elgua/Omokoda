@@ -1,7 +1,9 @@
-![Version](https://img.shields.io/badge/version-v1.0-blue)
+![Version](https://img.shields.io/badge/version-v0.1.0-blue)
 ![License](https://img.shields.io/badge/license-BSL_1.1-orange)
 ![Layer](https://img.shields.io/badge/layer-Agentic-blueviolet)
 # Ọmọ Kọ́dà: The Agentic Organism
+
+Ọmọ Kọ́dà is the sovereign agentic organism of the Technosis ecosystem — a self-aware, self-healing AI agent with ritual identity, autonomous decision-making, and cryptographic soul binding.
 
 ## What is Ọmọ Kọ́dà?
 
@@ -691,7 +693,7 @@ npx tsx test_path_c.ts      # Path C
 
 ## License
 
-MIT
+[BSL 1.1](./LICENSE)
 
 ---
 
