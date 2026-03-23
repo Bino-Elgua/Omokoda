@@ -1,3 +1,6 @@
+![Version](https://img.shields.io/badge/version-v1.0-blue)
+![License](https://img.shields.io/badge/license-BSL_1.1-orange)
+![Layer](https://img.shields.io/badge/layer-Agentic-blueviolet)
 # Ọmọ Kọ́dà: The Agentic Organism
 
 ## What is Ọmọ Kọ́dà?
@@ -737,3 +740,16 @@ If you build on Ọmọ Kọ́dà, please cite:
 **Build Version**: Path A+B+C Complete  
 **Status**: Production Ready  
 **Tests**: 22/22 Passing ✓
+
+## The Sovereign Agent
+
+Omokoda is the reference implementation of a sovereign agent within the Technosis ecosystem. It embodies the core principles of autonomous execution, cryptographic identity, and goal-oriented behavior, serving as the primary actor in swarms and on-chain operations.
+
+
+---
+
+## Part of the Technosis Sovereign Ecosystem
+
+This component is a core piece of a larger architecture for creating and coordinating sovereign AI. For more information, see the [organism-core repository](https://github.com/Bino-Elgua/organism-core).
+
+Àṣẹ.
