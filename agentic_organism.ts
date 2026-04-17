@@ -6,6 +6,7 @@ import { RLMOracle, ArgumentRound } from "./rlm_core.ts";
 import { MemoryRouter, BreathBlob } from "./memory_router.ts";
 import { OutputDistiller } from "./output_distiller.ts";
 import UnitreeEmbodiment from "./unitree_embodiment.ts";
+import { VeilDayContext, getCurrentVeilDayContext } from "./veil_day_context.ts";
 import crypto from "crypto";
 
 /**
@@ -37,6 +38,7 @@ export interface BreathInput {
   prompt: string;
   tone_vector: number[]; // 32-dim emotion
   user_address?: string;
+  veil_day?: VeilDayContext;
 }
 
 /**
@@ -106,6 +108,7 @@ export class AgenticOrganism {
 
     const user = breath_input.user_address || this.config.user_address;
     const timestamp_ms = Date.now() as u64;
+    const veil_day = breath_input.veil_day || getCurrentVeilDayContext();
 
     // 1. Create breath blob
     const breath_hash = this.hash_breath(breath_input);
@@ -135,7 +138,8 @@ export class AgenticOrganism {
     const ritual_round = await this.rlm_oracle.ritual_round(
       breath,
       this.epoch,
-      user
+      user,
+      veil_day
     );
 
     this.log(

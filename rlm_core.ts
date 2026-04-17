@@ -4,6 +4,7 @@
 
 import { MemoryRouter, BreathBlob, build_lobe_context } from "./memory_router.ts";
 import { OutputDistiller, LobeResponse, DistilledOutput } from "./output_distiller.ts";
+import { VeilDayContext, formatVeilDayContext } from "./veil_day_context.ts";
 import crypto from "crypto";
 
 /**
@@ -153,7 +154,8 @@ export class RLMOracle {
   async ritual_round(
     breath: BreathBlob,
     epoch: u64,
-    user_address: string
+    user_address: string,
+    veil_day_context?: VeilDayContext
   ): Promise<ArgumentRound> {
     const breath_hash = breath.hash;
     const timestamp_ms = breath.timestamp_ms;
@@ -178,7 +180,8 @@ export class RLMOracle {
       1,
       breath,
       round,
-      user_address
+      user_address,
+      veil_day_context
     );
     if (orunmila_response) {
       round.responses.push(orunmila_response);
@@ -201,7 +204,7 @@ export class RLMOracle {
         return round;
       }
 
-      const response = await this.invoke_lobe(i, breath, round, user_address);
+      const response = await this.invoke_lobe(i, breath, round, user_address, veil_day_context);
       if (response) {
         round.responses.push(response);
 
@@ -273,7 +276,8 @@ export class RLMOracle {
     lobe_id: number,
     breath: BreathBlob,
     round: ArgumentRound,
-    user_address: string
+    user_address: string,
+    veil_day_context?: VeilDayContext
   ): Promise<LobeResponse | null> {
     this.current_depth += 1;
     this.depth_stack.push(this.current_depth);
@@ -288,7 +292,8 @@ export class RLMOracle {
       this.config.memory_router,
       lobe_id,
       user_address,
-      breath.hash
+      breath.hash,
+      veil_day_context ? formatVeilDayContext(veil_day_context) : ""
     );
 
     const full_prompt = `

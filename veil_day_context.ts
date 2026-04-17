@@ -37,6 +37,7 @@ export interface VeilDayContext {
   jubilee_cycle: number;
 
   five_layer: FiveLayerOrisa;
+  five_layer_orisa?: FiveLayerOrisa;
 
   gates: {
     sabbath: boolean;
@@ -261,7 +262,14 @@ export function computeLobeWeights(ctx: VeilDayContext): LobeWeight[] {
  * In production, queries the Ritual-Codex BTC Time bridge.
  * Falls back to Gregorian approximation if unavailable.
  */
-export function getCurrentVeilDayContext(): VeilDayContext {
+export function normalizeVeilDayContext(ctx: VeilDayContext): VeilDayContext {
+  return {
+    ...ctx,
+    five_layer_orisa: ctx.five_layer_orisa || ctx.five_layer,
+  };
+}
+
+export function getCurrentVeilDayContext(seed?: Partial<VeilDayContext>): VeilDayContext {
   const now = new Date();
   const dayOfWeek = now.getUTCDay(); // 0=Sunday
   const dayOfYear = Math.floor(
@@ -284,7 +292,7 @@ export function getCurrentVeilDayContext(): VeilDayContext {
   const isVoid = dayOfYear === 364;
   const isCapstone = dayOfYear % 343 === 342;
 
-  return {
+  return normalizeVeilDayContext({
     block_height: 0, // Would be populated from BTC RPC
     day_number: dayOfYear,
     veil_number: veilNumber,
@@ -309,7 +317,8 @@ export function getCurrentVeilDayContext(): VeilDayContext {
       multiplier: isSabbath ? 1.1 : isEshuSquared ? 1.369 : 1.0,
       settle_only: isSabbath,
     },
-  };
+    ...seed,
+  } as VeilDayContext);
 }
 
 /**
@@ -327,4 +336,14 @@ export function formatLobeWeights(weights: LobeWeight[]): string {
     return `  ${w.lobe.padEnd(14)} ${bar.padEnd(25)} ${w.final_weight.toFixed(3)} ${flags}`;
   });
   return `[Omo Koda Lobe Activation]\n${lines.join("\n")}`;
+}
+
+export function formatVeilDayContext(ctx: VeilDayContext): string {
+  const normalized = normalizeVeilDayContext(ctx);
+  const layer = normalized.five_layer_orisa || normalized.five_layer;
+  return [
+    `Spiral block=${normalized.block_height} veil=${normalized.veil_number} day=${normalized.day_number}`,
+    `Orisa day=${layer.day} week=${layer.week} moon=${layer.moon} year=${layer.year} jubilee=${layer.jubilee}`,
+    `Gates sabbath=${normalized.gates.sabbath} eshu_squared=${normalized.gates.eshu_squared} void_day=${normalized.gates.void_day} capstone=${normalized.gates.capstone}`,
+  ].join("\n");
 }

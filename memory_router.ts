@@ -221,7 +221,8 @@ export function build_lobe_context(
   router: MemoryRouter,
   lobe_id: number,
   user_address: string,
-  current_breath: string
+  current_breath: string,
+  spiral_context: string = ""
 ): string {
   const chains = {
     1: () => router.get_orunmila_chain(user_address),
@@ -245,6 +246,10 @@ export function build_lobe_context(
   
   for (const breath of chain.slice(-5)) {  // Last 5 for context window
     context += `- ${breath.timestamp_ms}: ${breath.prompt.substring(0, 50)}... [${breath.ashe_seal}]\n`;
+  }
+
+  if (spiral_context) {
+    context += `\nSpiral context:\n${spiral_context}\n`;
   }
 
   return context;
